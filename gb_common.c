@@ -1,5 +1,5 @@
 //=============================================================================
-//
+// 28.5.2021: Fix compiler warnings
 //
 // Gertboard Common code
 //
@@ -44,6 +44,7 @@
 #define UART0_BASE               (BCM2708_PERI_BASE + 0x201000) /* Uart 0 */
 #define UART1_BASE               (BCM2708_PERI_BASE + 0x215000) /* Uart 1 (not used) */
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -148,7 +149,7 @@ void setup_io()
    /*
     * mmap clock
     */
-   if ((clk_mem_orig = malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
+   if ((clk_mem_orig = (char *)malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
       printf("allocation error \n");
       exit (-1);
    }
@@ -158,7 +159,7 @@ void setup_io()
    else
      clk_mem = clk_mem_orig;
 
-   clk_map = (unsigned char *)mmap(
+   clk_map = (char *)mmap(
       (caddr_t)clk_mem,
       BLOCK_SIZE,
       PROT_READ|PROT_WRITE,
@@ -168,7 +169,7 @@ void setup_io()
    );
 
    if ((long)clk_map < 0) {
-      printf("clk mmap error %d\n", (int)clk_map);
+      printf("clk mmap error: %d\n", errno);
       exit (-1);
    }
    clk = (volatile unsigned *)clk_map;
@@ -177,7 +178,7 @@ void setup_io()
    /*
     * mmap GPIO
     */
-   if ((gpio_mem_orig = malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
+   if ((gpio_mem_orig = (char *)malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
       printf("allocation error \n");
       exit (-1);
    }
@@ -187,7 +188,7 @@ void setup_io()
    else
      gpio_mem = gpio_mem_orig;
 
-   gpio_map = (unsigned char *)mmap(
+   gpio_map = (char *)mmap(
       (caddr_t)gpio_mem,
       BLOCK_SIZE,
       PROT_READ|PROT_WRITE,
@@ -205,7 +206,7 @@ void setup_io()
    /*
     * mmap PWM
     */
-   if ((pwm_mem_orig = malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
+   if ((pwm_mem_orig = (char *)malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
       printf("allocation error \n");
       exit (-1);
    }
@@ -215,7 +216,7 @@ void setup_io()
    else
      pwm_mem = pwm_mem_orig;
 
-   pwm_map = (unsigned char *)mmap(
+   pwm_map = (char *)mmap(
       (caddr_t)pwm_mem,
       BLOCK_SIZE,
       PROT_READ|PROT_WRITE,
@@ -233,7 +234,7 @@ void setup_io()
    /*
     * mmap SPI0
     */
-   if ((spi0_mem_orig = malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
+   if ((spi0_mem_orig = (char *)malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
       printf("allocation error \n");
       exit (-1);
    }
@@ -243,7 +244,7 @@ void setup_io()
    else
      spi0_mem = spi0_mem_orig;
 
-   spi0_map = (unsigned char *)mmap(
+   spi0_map = (char *)mmap(
       (caddr_t)spi0_mem,
       BLOCK_SIZE,
       PROT_READ|PROT_WRITE,
@@ -261,7 +262,7 @@ void setup_io()
    /*
     * mmap UART
     */
-   if ((uart_mem_orig = malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
+   if ((uart_mem_orig = (char *)malloc(BLOCK_SIZE + (PAGE_SIZE-1))) == NULL) {
       printf("allocation error \n");
       exit (-1);
    }
@@ -271,7 +272,7 @@ void setup_io()
    else
      uart_mem = uart_mem_orig;
 
-   uart_map = (unsigned char *)mmap(
+   uart_map = (char *)mmap(
       (caddr_t)uart_mem,
       BLOCK_SIZE,
       PROT_READ|PROT_WRITE,
